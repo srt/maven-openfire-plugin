@@ -74,9 +74,9 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     private List filters;
 
     /**
-     * The path to the web.xml file to use.
+     * The path to the web.xml file to use, old default was ${maven.war.webxml}.
      *
-     * @parameter expression="${maven.war.webxml}"
+     * @parameter expression="${basedir}/target/jspweb.xml"
      */
     private File webXml;
 
