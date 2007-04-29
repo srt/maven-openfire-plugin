@@ -29,26 +29,26 @@ import java.util.Set;
  * @todo merge with resources/assembly plugin
  */
 public class CompositeMap
-    extends AbstractMap
+        extends AbstractMap
 {
     private Map recessive;
 
     private Map dominant;
 
-    public CompositeMap( Map dominant, Map recessive )
+    public CompositeMap(Map dominant, Map recessive)
     {
-        this.dominant = Collections.unmodifiableMap( dominant );
+        this.dominant = Collections.unmodifiableMap(dominant);
 
-        this.recessive = Collections.unmodifiableMap( recessive );
+        this.recessive = Collections.unmodifiableMap(recessive);
     }
 
-    public synchronized Object get( Object key )
+    public synchronized Object get(Object key)
     {
-        Object value = dominant.get( key );
+        Object value = dominant.get(key);
 
-        if ( value == null )
+        if (value == null)
         {
-            value = recessive.get( key );
+            value = recessive.get(key);
         }
 
         return value;
@@ -56,6 +56,6 @@ public class CompositeMap
 
     public Set entrySet()
     {
-        throw new UnsupportedOperationException( "Cannot enumerate properties in a composite map" );
+        throw new UnsupportedOperationException("Cannot enumerate properties in a composite map");
     }
 }

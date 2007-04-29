@@ -40,16 +40,14 @@ import java.io.PrintWriter;
  * @phase process-resources
  * @requiresDependencyResolution runtime
  */
-public class WarManifestMojo
-        extends AbstractWarMojo
+public class WarManifestMojo extends AbstractWarMojo
 {
     /**
      * Executes the WarMojo on the current project.
      *
      * @throws MojoExecutionException if an error occured while building the webapp
      */
-    public void execute()
-            throws MojoExecutionException
+    public void execute() throws MojoExecutionException
     {
         File manifestDir = new File(getWarSourceDirectory(), "META-INF");
         if (!manifestDir.exists())

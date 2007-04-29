@@ -30,23 +30,23 @@ import java.util.Set;
  * @todo merge with resources/assembly plugin
  */
 public class ReflectionProperties
-    extends AbstractMap
+        extends AbstractMap
 {
     private MavenProject project;
 
-    public ReflectionProperties( MavenProject project )
+    public ReflectionProperties(MavenProject project)
     {
         this.project = project;
     }
 
-    public synchronized Object get( Object key )
+    public synchronized Object get(Object key)
     {
         Object value = null;
         try
         {
-            value = ReflectionValueExtractor.evaluate( String.valueOf( key ), project );
+            value = ReflectionValueExtractor.evaluate(String.valueOf(key), project);
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
             //TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
         }
@@ -55,6 +55,6 @@ public class ReflectionProperties
 
     public Set entrySet()
     {
-        throw new UnsupportedOperationException( "Cannot enumerate properties in a project" );
+        throw new UnsupportedOperationException("Cannot enumerate properties in a project");
     }
 }

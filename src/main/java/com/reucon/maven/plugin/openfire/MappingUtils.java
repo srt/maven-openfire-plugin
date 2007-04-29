@@ -55,7 +55,7 @@ class MappingUtils
      * @param artifact   the artifact to use as value object for tokens
      * @return expression the evaluated expression
      */
-    public static String evaluateFileNameMapping( String expression, Artifact artifact )
+    public static String evaluateFileNameMapping(String expression, Artifact artifact)
 
     {
         String value = expression;
@@ -65,34 +65,34 @@ class MappingUtils
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
-        interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
-        interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
+        interpolator.addValueSource(new ObjectBasedValueSource(artifact));
+        interpolator.addValueSource(new ObjectBasedValueSource(artifact.getArtifactHandler()));
 
         Properties classifierMask = new Properties();
-        classifierMask.setProperty( "classifier", "" );
+        classifierMask.setProperty("classifier", "");
 
-        interpolator.addValueSource( new PropertiesInterpolationValueSource( classifierMask ) );
+        interpolator.addValueSource(new PropertiesInterpolationValueSource(classifierMask));
 
-        value = interpolator.interpolate( value, "__artifact" );
+        value = interpolator.interpolate(value, "__artifact");
 
         return value;
     }
 
 
     static class PropertiesInterpolationValueSource
-        implements ValueSource
+            implements ValueSource
     {
 
         private final Properties properties;
 
-        public PropertiesInterpolationValueSource( Properties properties )
+        public PropertiesInterpolationValueSource(Properties properties)
         {
             this.properties = properties;
         }
 
-        public Object getValue( String key )
+        public Object getValue(String key)
         {
-            return properties.getProperty( key );
+            return properties.getProperty(key);
         }
 
     }
@@ -113,59 +113,59 @@ class MappingUtils
             valueSources = new ArrayList();
         }
 
-        public RegexBasedInterpolator( List valueSources )
+        public RegexBasedInterpolator(List valueSources)
         {
-            this.valueSources = new ArrayList( valueSources );
+            this.valueSources = new ArrayList(valueSources);
         }
 
-        public void addValueSource( ValueSource valueSource )
+        public void addValueSource(ValueSource valueSource)
         {
-            this.valueSources.add( valueSource );
+            this.valueSources.add(valueSource);
         }
 
-        public void removeValuesSource( ValueSource valueSource )
+        public void removeValuesSource(ValueSource valueSource)
         {
-            this.valueSources.remove( valueSource );
+            this.valueSources.remove(valueSource);
         }
 
-        public String interpolate( String input, String thisPrefixPattern )
+        public String interpolate(String input, String thisPrefixPattern)
         {
             String result = input;
 
-            Pattern expressionPattern = Pattern.compile( "\\$\\{(" + thisPrefixPattern + ")?([^}]+)\\}" );
-            Matcher matcher = expressionPattern.matcher( result );
+            Pattern expressionPattern = Pattern.compile("\\$\\{(" + thisPrefixPattern + ")?([^}]+)\\}");
+            Matcher matcher = expressionPattern.matcher(result);
 
-            while ( matcher.find() )
+            while (matcher.find())
             {
-                String wholeExpr = matcher.group( 0 );
-                String realExpr = matcher.group( 2 );
+                String wholeExpr = matcher.group(0);
+                String realExpr = matcher.group(2);
 
-                if ( realExpr.startsWith( "." ) )
+                if (realExpr.startsWith("."))
                 {
-                    realExpr = realExpr.substring( 1 );
+                    realExpr = realExpr.substring(1);
                 }
 
                 Object value = null;
-                for ( Iterator it = valueSources.iterator(); it.hasNext() && value == null; )
+                for (Iterator it = valueSources.iterator(); it.hasNext() && value == null;)
                 {
                     ValueSource vs = (ValueSource) it.next();
 
-                    value = vs.getValue( realExpr );
+                    value = vs.getValue(realExpr);
                 }
 
                 // if the expression refers to itself, die.
-                if ( wholeExpr.equals( value ) )
+                if (wholeExpr.equals(value))
                 {
-                    throw new IllegalArgumentException( "Expression: \'" + wholeExpr + "\' references itself." );
+                    throw new IllegalArgumentException("Expression: \'" + wholeExpr + "\' references itself.");
                 }
 
-                if ( value != null )
+                if (value != null)
                 {
-                    result = StringUtils.replace( result, wholeExpr, String.valueOf( value ) );
+                    result = StringUtils.replace(result, wholeExpr, String.valueOf(value));
                     // could use:
                     // result = matcher.replaceFirst( stringValue );
                     // but this could result in multiple lookups of stringValue, and replaceAll is not correct behaviour
-                    matcher.reset( result );
+                    matcher.reset(result);
                 }
             }
 

@@ -29,13 +29,10 @@ import org.apache.maven.plugin.MojoFailureException;
  * @phase package
  * @requiresDependencyResolution runtime
  */
-public class WarExplodedMojo
-    extends AbstractWarMojo
+public class WarExplodedMojo extends AbstractWarMojo
 {
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
-        buildExplodedWebapp( getWebappDirectory() );
+        buildExplodedWebapp(getWebappDirectory());
     }
-
 }

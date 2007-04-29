@@ -40,8 +40,7 @@ import java.io.IOException;
  * @phase package
  * @requiresDependencyResolution runtime
  */
-public class WarMojo
-    extends AbstractWarMojo
+public class WarMojo extends AbstractWarMojo
 {
     /**
      * The directory for the generated WAR.
@@ -99,18 +98,18 @@ public class WarMojo
         return classifier;
     }
 
-    protected static File getWarFile( File basedir, String finalName, String classifier )
+    protected static File getWarFile(File basedir, String finalName, String classifier)
     {
-        if ( classifier == null )
+        if (classifier == null)
         {
             classifier = "";
         }
-        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        else if (classifier.trim().length() > 0 && !classifier.startsWith("-"))
         {
             classifier = "-" + classifier;
         }
 
-        return new File( basedir, finalName + classifier + ".jar" );
+        return new File(basedir, finalName + classifier + ".jar");
     }
 
     /**
@@ -119,29 +118,29 @@ public class WarMojo
      * @throws MojoExecutionException if an error occured while building the webapp
      */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+            throws MojoExecutionException, MojoFailureException
     {
-        File warFile = getWarFile( new File( outputDirectory ), warName, classifier );
+        File warFile = getWarFile(new File(outputDirectory), warName, classifier);
 
         try
         {
-            performPackaging( warFile );
+            performPackaging(warFile);
         }
-        catch ( DependencyResolutionRequiredException e )
+        catch (DependencyResolutionRequiredException e)
         {
-            throw new MojoExecutionException( "Error assembling Openfire Plugin: " + e.getMessage(), e );
+            throw new MojoExecutionException("Error assembling Openfire Plugin: " + e.getMessage(), e);
         }
-        catch ( ManifestException e )
+        catch (ManifestException e)
         {
-            throw new MojoExecutionException( "Error assembling Openfire Plugin", e );
+            throw new MojoExecutionException("Error assembling Openfire Plugin", e);
         }
-        catch ( IOException e )
+        catch (IOException e)
         {
-            throw new MojoExecutionException( "Error assembling Openfire Plugin", e );
+            throw new MojoExecutionException("Error assembling Openfire Plugin", e);
         }
-        catch ( ArchiverException e )
+        catch (ArchiverException e)
         {
-            throw new MojoExecutionException( "Error assembling Openfire Plugin: " + e.getMessage(), e );
+            throw new MojoExecutionException("Error assembling Openfire Plugin: " + e.getMessage(), e);
         }
     }
 
@@ -155,44 +154,44 @@ public class WarMojo
      * @throws DependencyResolutionRequiredException
      *
      */
-    private void performPackaging( File warFile )
-        throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
-        MojoExecutionException, MojoFailureException
+    private void performPackaging(File warFile)
+            throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
+            MojoExecutionException, MojoFailureException
     {
-        buildExplodedWebapp( getWebappDirectory() );
+        buildExplodedWebapp(getWebappDirectory());
 
         //generate war file
-        getLog().info( "Generating Openfire Plugin " + warFile.getAbsolutePath() );
+        getLog().info("Generating Openfire Plugin " + warFile.getAbsolutePath());
 
         MavenArchiver archiver = new MavenArchiver();
         OpenfireArchiver openfireArchiver = new OpenfireArchiver();
 
         archiver.setArchiver(openfireArchiver);
 
-        archiver.setOutputFile( warFile );
+        archiver.setOutputFile(warFile);
 
-        openfireArchiver.addDirectory( getWebappDirectory(), getIncludes(), getExcludes() );
+        openfireArchiver.addDirectory(getWebappDirectory(), getIncludes(), getExcludes());
 
-        openfireArchiver.setWebxml( new File( getWebappDirectory(), "WEB-INF/web.xml" ) );
+        openfireArchiver.setWebxml(new File(getWebappDirectory(), "WEB-INF/web.xml"));
 
         // create archive
-        archiver.createArchive( getProject(), archive );
+        archiver.createArchive(getProject(), archive);
 
         String classifier = this.classifier;
-        if ( classifier != null )
+        if (classifier != null)
         {
-            projectHelper.attachArtifact( getProject(), "jar", classifier, warFile );
+            projectHelper.attachArtifact(getProject(), "jar", classifier, warFile);
         }
         else
         {
             Artifact artifact = getProject().getArtifact();
-            if ( primaryArtifact )
+            if (primaryArtifact)
             {
-                artifact.setFile( warFile );
+                artifact.setFile(warFile);
             }
-            else if ( artifact.getFile() == null || artifact.getFile().isDirectory() )
+            else if (artifact.getFile() == null || artifact.getFile().isDirectory())
             {
-                artifact.setFile( warFile );
+                artifact.setFile(warFile);
             }
         }
     }

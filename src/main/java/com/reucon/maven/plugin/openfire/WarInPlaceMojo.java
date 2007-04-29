@@ -28,14 +28,11 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal inplace
  * @requiresDependencyResolution runtime
  */
-public class WarInPlaceMojo
-    extends AbstractWarMojo
+public class WarInPlaceMojo extends AbstractWarMojo
 {
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Generating webapp in source directory... " + getWarSourceDirectory() );
-
-        buildExplodedWebapp( getWarSourceDirectory() );
+        getLog().info("Generating Openfire Plugin in source directory... " + getWarSourceDirectory());
+        buildExplodedWebapp(getWarSourceDirectory());
     }
 }

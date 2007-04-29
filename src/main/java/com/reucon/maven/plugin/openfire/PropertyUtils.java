@@ -48,37 +48,37 @@ public final class PropertyUtils
      * @param useSystemProps wheter to incorporate System.getProperties settings into the returned Properties object.
      * @return the loaded and fully resolved Properties object
      */
-    public static Properties loadPropertyFile( File propfile, boolean fail, boolean useSystemProps )
-        throws IOException
+    public static Properties loadPropertyFile(File propfile, boolean fail, boolean useSystemProps)
+            throws IOException
     {
         Properties props = new Properties();
 
-        if ( useSystemProps )
+        if (useSystemProps)
         {
-            props = new Properties( System.getProperties() );
+            props = new Properties(System.getProperties());
         }
 
-        if ( propfile.exists() )
+        if (propfile.exists())
         {
-            FileInputStream inStream = new FileInputStream( propfile );
+            FileInputStream inStream = new FileInputStream(propfile);
             try
             {
-                props.load( inStream );
+                props.load(inStream);
             }
             finally
             {
-                IOUtil.close( inStream );
+                IOUtil.close(inStream);
             }
         }
-        else if ( fail )
+        else if (fail)
         {
-            throw new FileNotFoundException( propfile.toString() );
+            throw new FileNotFoundException(propfile.toString());
         }
 
-        for ( Enumeration n = props.propertyNames(); n.hasMoreElements(); )
+        for (Enumeration n = props.propertyNames(); n.hasMoreElements();)
         {
             String k = (String) n.nextElement();
-            props.setProperty( k, PropertyUtils.getPropertyValue( k, props ) );
+            props.setProperty(k, PropertyUtils.getPropertyValue(k, props));
         }
 
         return props;
@@ -95,40 +95,40 @@ public final class PropertyUtils
      * not loop endlessly on a pair like
      * test = ${test}.
      */
-    private static String getPropertyValue( String k, Properties p )
+    private static String getPropertyValue(String k, Properties p)
     {
         // This can also be done using InterpolationFilterReader,
         // but it requires reparsing the file over and over until
         // it doesn't change.
 
-        String v = p.getProperty( k );
+        String v = p.getProperty(k);
         String ret = "";
         int idx, idx2;
 
-        while ( ( idx = v.indexOf( "${" ) ) >= 0 )
+        while ((idx = v.indexOf("${")) >= 0)
         {
             // append prefix to result
-            ret += v.substring( 0, idx );
+            ret += v.substring(0, idx);
 
             // strip prefix from original
-            v = v.substring( idx + 2 );
+            v = v.substring(idx + 2);
 
             // if no matching } then bail
-            if ( ( idx2 = v.indexOf( '}' ) ) < 0 )
+            if ((idx2 = v.indexOf('}')) < 0)
             {
                 break;
             }
 
             // strip out the key and resolve it
             // resolve the key/value for the ${statement}
-            String nk = v.substring( 0, idx2 );
-            v = v.substring( idx2 + 1 );
-            String nv = p.getProperty( nk );
+            String nk = v.substring(0, idx2);
+            v = v.substring(idx2 + 1);
+            String nv = p.getProperty(nk);
 
             // try global environment..
-            if ( nv == null )
+            if (nv == null)
             {
-                nv = System.getProperty( nk );
+                nv = System.getProperty(nk);
             }
 
             // if the key cannot be resolved,
@@ -136,7 +136,7 @@ public final class PropertyUtils
             // else prefix the original string with the
             // resolved property ( so it can be parsed further )
             // taking recursion into account.
-            if ( nv == null || nv.equals( k ) )
+            if (nv == null || nv.equals(k))
             {
                 ret += "${" + nk + "}";
             }
