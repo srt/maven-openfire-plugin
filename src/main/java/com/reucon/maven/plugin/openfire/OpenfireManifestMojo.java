@@ -35,15 +35,15 @@ import java.io.PrintWriter;
  * Generate a manifest for this WAR.
  *
  * @author Mike Perham
- * @version $Id: WarMojo.java 307363 2005-10-09 04:50:58Z brett $
+ * @version $Id: OpenfireMojo.java 307363 2005-10-09 04:50:58Z brett $
  * @goal manifest
  * @phase process-resources
  * @requiresDependencyResolution runtime
  */
-public class WarManifestMojo extends AbstractWarMojo
+public class OpenfireManifestMojo extends AbstractOpenfireMojo
 {
     /**
-     * Executes the WarMojo on the current project.
+     * Executes the OpenfireMojo on the current project.
      *
      * @throws MojoExecutionException if an error occured while building the webapp
      */

@@ -32,15 +32,15 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Build a war/webapp.
+ * Build an Openfire Plugin jar.
  *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id: WarMojo.java 480784 2006-11-30 00:07:45Z jvanzyl $
- * @goal war
+ * @version $Id: OpenfireMojo.java 480784 2006-11-30 00:07:45Z jvanzyl $
+ * @goal openfire-plugin
  * @phase package
  * @requiresDependencyResolution runtime
  */
-public class WarMojo extends AbstractWarMojo
+public class OpenfireMojo extends AbstractOpenfireMojo
 {
     /**
      * The directory for the generated WAR.
@@ -113,12 +113,11 @@ public class WarMojo extends AbstractWarMojo
     }
 
     /**
-     * Executes the WarMojo on the current project.
+     * Executes the OpenfireMojo on the current project.
      *
      * @throws MojoExecutionException if an error occured while building the webapp
      */
-    public void execute()
-            throws MojoExecutionException, MojoFailureException
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
         File warFile = getWarFile(new File(outputDirectory), warName, classifier);
 
@@ -158,7 +157,7 @@ public class WarMojo extends AbstractWarMojo
             throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
             MojoExecutionException, MojoFailureException
     {
-        buildExplodedWebapp(getWebappDirectory());
+        buildExplodedOpenfirePlugin(getOpenfirePluginDirectory());
 
         //generate war file
         getLog().info("Generating Openfire Plugin " + warFile.getAbsolutePath());
@@ -170,9 +169,9 @@ public class WarMojo extends AbstractWarMojo
 
         archiver.setOutputFile(warFile);
 
-        openfireArchiver.addDirectory(getWebappDirectory(), getIncludes(), getExcludes());
+        openfireArchiver.addDirectory(getOpenfirePluginDirectory(), getIncludes(), getExcludes());
 
-        openfireArchiver.setWebxml(new File(getWebappDirectory(), "WEB-INF/web.xml"));
+        openfireArchiver.setWebxml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
 
         // create archive
         archiver.createArchive(getProject(), archive);

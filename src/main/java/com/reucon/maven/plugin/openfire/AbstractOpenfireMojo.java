@@ -1,24 +1,5 @@
 package com.reucon.maven.plugin.openfire;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
@@ -28,17 +9,13 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.*;
 
 import java.io.*;
 import java.util.*;
 
-public abstract class AbstractWarMojo extends AbstractMojo
+public abstract class AbstractOpenfireMojo extends AbstractMojo
 {
     /**
      * The maven project.
@@ -59,15 +36,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
     private File classesDirectory;
 
     /**
-     * Whether a JAR file will be created for the classes in the webapp. Using this optional configuration
-     * parameter will make the generated classes to be archived into a jar file
-     * and the classes directory will then be excluded from the webapp.
-     *
-     * @parameter expression="${archiveClasses}" default-value="false"
-     */
-    private boolean archiveClasses;
-
-    /**
      * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
      *
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
@@ -76,12 +44,12 @@ public abstract class AbstractWarMojo extends AbstractMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The directory where the webapp is built.
+     * The directory where the Openfire Plugin is built.
      *
      * @parameter expression="${project.build.directory}/${project.build.finalName}"
      * @required
      */
-    private File webappDirectory;
+    private File openfirePluginDirectory;
 
     /**
      * Single directory for extra files to include in the WAR.
@@ -113,21 +81,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
     private File webXml;
 
     /**
-     * The path to the context.xml file to use.
-     *
-     * @parameter expression="${maven.war.containerConfigXML}"
-     */
-    private File containerConfigXML;
-
-    /**
-     * Directory to unpack dependent WARs into if needed
-     *
-     * @parameter expression="${project.build.directory}/war/work"
-     * @required
-     */
-    private File workDirectory;
-
-    /**
      * The file name mapping to use to copy libraries and tlds. If no file mapping is
      * set (default) the file is copied with its standard name.
      *
@@ -135,14 +88,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
      * @since 2.0.3
      */
     private String outputFileNameMapping;
-
-    /**
-     * To look up Archiver/UnArchiver implementations
-     *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
-     * @required
-     */
-    protected ArchiverManager archiverManager;
 
     private static final String WEB_INF = "WEB-INF";
 
@@ -171,23 +116,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
     private String warSourceExcludes;
 
     /**
-     * The comma separated list of tokens to include when doing
-     * a war overlay.
-     * Default is '**'
-     *
-     * @parameter
-     */
-    private String dependentWarIncludes = "**";
-
-    /**
-     * The comma separated list of tokens to exclude when doing
-     * a war overlay.
-     *
-     * @parameter
-     */
-    private String dependentWarExcludes;
-
-    /**
      * The maven archive configuration to use.
      *
      * @parameter
@@ -195,7 +123,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
     protected MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     private static final String[] EMPTY_STRING_ARRAY = {};
-
 
     public MavenProject getProject()
     {
@@ -217,14 +144,14 @@ public abstract class AbstractWarMojo extends AbstractMojo
         this.classesDirectory = classesDirectory;
     }
 
-    public File getWebappDirectory()
+    public File getOpenfirePluginDirectory()
     {
-        return webappDirectory;
+        return openfirePluginDirectory;
     }
 
-    public void setWebappDirectory(File webappDirectory)
+    public void setOpenfirePluginDirectory(File openfirePluginDirectory)
     {
-        this.webappDirectory = webappDirectory;
+        this.openfirePluginDirectory = openfirePluginDirectory;
     }
 
     public File getWarSourceDirectory()
@@ -247,16 +174,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
         this.webXml = webXml;
     }
 
-    public File getContainerConfigXML()
-    {
-        return containerConfigXML;
-    }
-
-    public void setContainerConfigXML(File containerConfigXML)
-    {
-        this.containerConfigXML = containerConfigXML;
-    }
-
     public String getOutputFileNameMapping()
     {
         return outputFileNameMapping;
@@ -275,7 +192,7 @@ public abstract class AbstractWarMojo extends AbstractMojo
      */
     protected String[] getExcludes()
     {
-        List excludeList = new ArrayList();
+        List<String> excludeList = new ArrayList<String>();
         if (StringUtils.isNotEmpty(warSourceExcludes))
         {
             excludeList.addAll(Arrays.asList(StringUtils.split(warSourceExcludes, ",")));
@@ -287,13 +204,7 @@ public abstract class AbstractWarMojo extends AbstractMojo
             excludeList.add("**/" + WEB_INF + "/web.xml");
         }
 
-        // if contextXML is specified, omit the one in the source directory
-        if (containerConfigXML != null && StringUtils.isNotEmpty(containerConfigXML.getName()))
-        {
-            excludeList.add("**/" + META_INF + "/" + containerConfigXML.getName());
-        }
-
-        return (String[]) excludeList.toArray(EMPTY_STRING_ARRAY);
+        return excludeList.toArray(EMPTY_STRING_ARRAY);
     }
 
     /**
@@ -307,59 +218,25 @@ public abstract class AbstractWarMojo extends AbstractMojo
         return StringUtils.split(StringUtils.defaultString(warSourceIncludes), ",");
     }
 
-    /**
-     * Returns a string array of the excludes to be used
-     * when adding dependent wars as an overlay onto this war.
-     *
-     * @return an array of tokens to exclude
-     */
-    protected String[] getDependentWarExcludes()
+    public void buildExplodedOpenfirePlugin(File openfireDirectory) throws MojoExecutionException, MojoFailureException
     {
-        String[] excludes;
-        if (StringUtils.isNotEmpty(dependentWarExcludes))
-        {
-            excludes = StringUtils.split(dependentWarExcludes, ",");
-        }
-        else
-        {
-            excludes = EMPTY_STRING_ARRAY;
-        }
-        return excludes;
-    }
+        getLog().info("Exploding Openfire Plugin...");
 
-    /**
-     * Returns a string array of the includes to be used
-     * when adding dependent wars as an overlay onto this war.
-     *
-     * @return an array of tokens to include
-     */
-    protected String[] getDependentWarIncludes()
-    {
-        return StringUtils.split(StringUtils.defaultString(dependentWarIncludes), ",");
-    }
-
-    public void buildExplodedWebapp(File webappDirectory)
-            throws MojoExecutionException, MojoFailureException
-    {
-        getLog().info("Exploding webapp...");
-
-        webappDirectory.mkdirs();
+        openfireDirectory.mkdirs();
 
         try
         {
-            buildWebapp(project, webappDirectory);
+            buildWebapp(project, openfireDirectory);
         }
         catch (IOException e)
         {
-            throw new MojoExecutionException("Could not explode webapp...", e);
+            throw new MojoExecutionException("Could not explode Openfire Plugin...", e);
         }
     }
 
-    private Map getBuildFilterProperties()
-            throws MojoExecutionException
+    private Map getBuildFilterProperties() throws MojoExecutionException
     {
-
-        Map filterProperties = new Properties();
+        Map<Object,Object> filterProperties = new Properties();
 
         // System properties
         filterProperties.putAll(System.getProperties());
@@ -398,8 +275,7 @@ public abstract class AbstractWarMojo extends AbstractMojo
      * @param filterProperties
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources(Resource resource, File webappDirectory, Map filterProperties)
-            throws IOException
+    public void copyResources(Resource resource, File webappDirectory, Map filterProperties) throws IOException
     {
         if (!resource.getDirectory().equals(webappDirectory.getPath()))
         {
@@ -448,10 +324,9 @@ public abstract class AbstractWarMojo extends AbstractMojo
             if (warSourceDirectory.exists())
             {
                 String[] fileNames = getWarFiles(sourceDirectory);
-                for (int i = 0; i < fileNames.length; i++)
+                for (String fileName : fileNames)
                 {
-                    copyFileIfModified(new File(sourceDirectory, fileNames[i]),
-                            new File(webappDirectory, fileNames[i]));
+                    copyFileIfModified(new File(sourceDirectory, fileName), new File(webappDirectory, fileName));
                 }
             }
         }
@@ -489,42 +364,41 @@ public abstract class AbstractWarMojo extends AbstractMojo
     }
 
     /**
-     * Builds the webapp for the specified project.
+     * Builds the Openfire Plugin for the specified project.
      * <p/>
-     * Classes, libraries and tld files are copied to
-     * the <tt>webappDirectory</tt> during this phase.
+     * Classes and libraries are copied to
+     * <tt>openfirePluginDirectory</tt> during this phase.
      *
      * @param project         the maven project
-     * @param webappDirectory
+     * @param openfirePluginDirectory
      * @throws java.io.IOException if an error occured while building the webapp
      */
-    public void buildWebapp(MavenProject project, File webappDirectory)
+    public void buildWebapp(MavenProject project, File openfirePluginDirectory)
             throws MojoExecutionException, IOException, MojoFailureException
     {
-        getLog().info("Assembling webapp " + project.getArtifactId() + " in " + webappDirectory);
+        getLog().info("Assembling webapp " + project.getArtifactId() + " in " + openfirePluginDirectory);
 
-        File webinfDir = new File(webappDirectory, WEB_INF);
+        File webinfDir = new File(openfirePluginDirectory, "web" + File.separator + WEB_INF);
         webinfDir.mkdirs();
 
-        File metainfDir = new File(webappDirectory, META_INF);
+        File metainfDir = new File(openfirePluginDirectory, "web" + File.separator + META_INF);
         metainfDir.mkdirs();
 
-        List webResources = this.webResources != null ? Arrays.asList(this.webResources) : null;
+        List<Resource> webResources = this.webResources != null ? Arrays.asList(this.webResources) : null;
         if (webResources != null && webResources.size() > 0)
         {
             Map filterProperties = getBuildFilterProperties();
-            for (Iterator it = webResources.iterator(); it.hasNext();)
+            for (Resource resource : webResources)
             {
-                Resource resource = (Resource) it.next();
                 if (!(new File(resource.getDirectory())).isAbsolute())
                 {
                     resource.setDirectory(project.getBasedir() + File.separator + resource.getDirectory());
                 }
-                copyResources(resource, webappDirectory, filterProperties);
+                copyResources(resource, openfirePluginDirectory, filterProperties);
             }
         }
 
-        copyResources(warSourceDirectory, webappDirectory);
+        copyResources(warSourceDirectory, new File(openfirePluginDirectory, "web"));
 
         if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
         {
@@ -537,36 +411,16 @@ public abstract class AbstractWarMojo extends AbstractMojo
             copyFileIfModified(webXml, new File(webinfDir, "/web.xml"));
         }
 
-        if (containerConfigXML != null && StringUtils.isNotEmpty(containerConfigXML.getName()))
+        File libDirectory = new File(openfirePluginDirectory, "lib");
+        File classesDirectory = new File(openfirePluginDirectory, "classes");
+
+        if (this.classesDirectory.exists() && !this.classesDirectory.equals(classesDirectory))
         {
-            metainfDir = new File(webappDirectory, META_INF);
-            String xmlFileName = containerConfigXML.getName();
-            copyFileIfModified(containerConfigXML, new File(metainfDir, xmlFileName));
-        }
-
-        File libDirectory = new File(webappDirectory, "lib");
-
-        File servicesDirectory = new File(webinfDir, "services");
-
-        File tldDirectory = new File(webinfDir, "tld");
-
-        File webappClassesDirectory = new File(webappDirectory, "/classes");
-
-        if (classesDirectory.exists() && !classesDirectory.equals(webappClassesDirectory))
-        {
-            if (archiveClasses)
-            {
-                createJarArchive(libDirectory);
-            }
-            else
-            {
-                copyDirectoryStructureIfModified(classesDirectory, webappClassesDirectory);
-            }
+            copyDirectoryStructureIfModified(this.classesDirectory, classesDirectory);
         }
 
         Set<Artifact> artifacts = project.getArtifacts();
         List<String> duplicates = findDuplicates(artifacts);
-        List<File> dependentWarDirectories = new ArrayList<File>();
 
         for (Artifact artifact : artifacts)
         {
@@ -586,56 +440,14 @@ public abstract class AbstractWarMojo extends AbstractMojo
             if (!artifact.isOptional() && filter.include(artifact))
             {
                 String type = artifact.getType();
-                if ("tld".equals(type))
+                if ("jar".equals(type) || "test-jar".equals(type))
                 {
-                    copyFileIfModified(artifact.getFile(), new File(tldDirectory, targetFileName));
-                }
-                else if ("aar".equals(type))
-                {
-                    copyFileIfModified(artifact.getFile(), new File(servicesDirectory, targetFileName));
+                    copyFileIfModified(artifact.getFile(), new File(libDirectory, targetFileName));
                 }
                 else
                 {
-                    if ("jar".equals(type) || "ejb".equals(type) || "ejb-client".equals(type) ||
-                            "test-jar".equals(type))
-                    {
-                        copyFileIfModified(artifact.getFile(), new File(libDirectory, targetFileName));
-                    }
-                    else
-                    {
-                        if ("par".equals(type))
-                        {
-                            targetFileName = targetFileName.substring(0, targetFileName.lastIndexOf('.')) + ".jar";
-
-                            getLog().debug(
-                                    "Copying " + artifact.getFile() + " to " + new File(libDirectory, targetFileName));
-
-                            copyFileIfModified(artifact.getFile(), new File(libDirectory, targetFileName));
-                        }
-                        else
-                        {
-                            if ("war".equals(type))
-                            {
-                                dependentWarDirectories.add(unpackWarToTempDirectory(artifact));
-                            }
-                            else
-                            {
-                                getLog().debug("Skipping artifact of type " + type + " for WEB-INF/lib");
-                            }
-                        }
-                    }
+                    getLog().debug("Skipping artifact of type " + type + " for WEB-INF/lib");
                 }
-            }
-        }
-
-        if (dependentWarDirectories.size() > 0)
-        {
-            getLog().info("Overlaying " + dependentWarDirectories.size() + " war(s).");
-
-            // overlay dependent wars
-            for (File dependentWarDirectory : dependentWarDirectories)
-            {
-                copyDependentWarContents(dependentWarDirectory, webappDirectory);
             }
         }
     }
@@ -663,123 +475,6 @@ public abstract class AbstractWarMojo extends AbstractMojo
             }
         }
         return duplicates;
-    }
-
-    /**
-     * Unpacks war artifacts into a temporary directory inside <tt>workDirectory</tt>
-     * named with the name of the war.
-     *
-     * @param artifact War artifact to unpack.
-     * @return Directory containing the unpacked war.
-     * @throws MojoExecutionException
-     */
-    private File unpackWarToTempDirectory(Artifact artifact)
-            throws MojoExecutionException
-    {
-        String name = artifact.getFile().getName();
-        File tempLocation = new File(workDirectory, name.substring(0, name.length() - 4));
-
-        boolean process = false;
-        if (!tempLocation.exists())
-        {
-            tempLocation.mkdirs();
-            process = true;
-        }
-        else if (artifact.getFile().lastModified() > tempLocation.lastModified())
-        {
-            process = true;
-        }
-
-        if (process)
-        {
-            File file = artifact.getFile();
-            try
-            {
-                unpack(file, tempLocation);
-            }
-            catch (NoSuchArchiverException e)
-            {
-                this.getLog().info("Skip unpacking dependency file with unknown extension: " + file.getPath());
-            }
-        }
-
-        return tempLocation;
-    }
-
-    /**
-     * Unpacks the archive file.
-     *
-     * @param file     File to be unpacked.
-     * @param location Location where to put the unpacked files.
-     */
-    private void unpack(File file, File location)
-            throws MojoExecutionException, NoSuchArchiverException
-    {
-        String archiveExt = FileUtils.getExtension(file.getAbsolutePath()).toLowerCase();
-
-        try
-        {
-            UnArchiver unArchiver = archiverManager.getUnArchiver(archiveExt);
-            unArchiver.setSourceFile(file);
-            unArchiver.setDestDirectory(location);
-            unArchiver.setOverwrite(true);
-            unArchiver.extract();
-        }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Error unpacking file: " + file + "to: " + location, e);
-        }
-        catch (ArchiverException e)
-        {
-            throw new MojoExecutionException("Error unpacking file: " + file + "to: " + location, e);
-        }
-    }
-
-    /**
-     * Recursively copies contents of <tt>srcDir</tt> into <tt>targetDir</tt>.
-     * This will not overwrite any existing files.
-     *
-     * @param srcDir    Directory containing unpacked dependent war contents
-     * @param targetDir Directory to overlay srcDir into
-     */
-    private void copyDependentWarContents(File srcDir, File targetDir)
-            throws MojoExecutionException
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir(srcDir);
-        scanner.setExcludes(getDependentWarExcludes());
-        scanner.addDefaultExcludes();
-
-        scanner.setIncludes(getDependentWarIncludes());
-
-        scanner.scan();
-
-        String[] dirs = scanner.getIncludedDirectories();
-        for (String dir : dirs)
-        {
-            new File(targetDir, dir).mkdirs();
-        }
-
-        String[] files = scanner.getIncludedFiles();
-
-        for (String file : files)
-        {
-            File targetFile = new File(targetDir, file);
-
-            try
-            {
-                // Don't copy if it is in the source directory
-                if (!new File(warSourceDirectory, file).exists())
-                {
-                    targetFile.getParentFile().mkdirs();
-                    copyFileIfModified(new File(srcDir, file), targetFile);
-                }
-            }
-            catch (IOException e)
-            {
-                throw new MojoExecutionException("Error copying file '" + file + "' to '" + targetFile + "'", e);
-            }
-        }
     }
 
     /**
@@ -849,8 +544,7 @@ public abstract class AbstractWarMojo extends AbstractMojo
      *                                       <p/>
      *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFileToDirectoryIfModified(File source, File destinationDirectory)
-            throws IOException
+    private static void copyFileToDirectoryIfModified(File source, File destinationDirectory) throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
         // to plexus-utils 1.2.
