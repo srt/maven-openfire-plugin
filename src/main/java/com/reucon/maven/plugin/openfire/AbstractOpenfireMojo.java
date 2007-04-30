@@ -68,6 +68,14 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     private File openfireSourceDirectory;
 
     /**
+     * Single directory for Openfire Plugin database scripts.
+     *
+     * @parameter expression="${basedir}/src/main/database"
+     * @required
+     */
+    private File databaseSourceDirectory;
+
+    /**
      * The list of webResources we want to transfer.
      *
      * @parameter
@@ -238,7 +246,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
 
     private Map getBuildFilterProperties() throws MojoExecutionException
     {
-        Map<Object,Object> filterProperties = new Properties();
+        Map<Object, Object> filterProperties = new Properties();
 
         // System properties
         filterProperties.putAll(System.getProperties());
@@ -333,19 +341,28 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         }
     }
 
-    private void copyOpenfirePluginConfiguration(File sourceDirectory, File webappDirectory, Map filterProperties) throws IOException
+    private void copyOpenfirePluginConfiguration(File sourceDirectory, File openfirePluginDirectory,
+                                                 Map filterProperties) throws IOException
     {
-        if (!sourceDirectory.equals(webappDirectory))
+        if (!sourceDirectory.equals(openfirePluginDirectory))
         {
-            getLog().info("Copying Openfire Plugin configuration to " + webappDirectory.getAbsolutePath());
+            getLog().info("Copying Openfire Plugin configuration to " + openfirePluginDirectory.getAbsolutePath());
             if (warSourceDirectory.exists())
             {
                 String[] fileNames = getWarFiles(sourceDirectory);
                 for (String fileName : fileNames)
                 {
-                    copyFilteredFile(new File(sourceDirectory, fileName),
-                            new File(webappDirectory, fileName), null, getFilterWrappers(),
-                            filterProperties);
+                    if (fileName.endsWith(".html") || fileName.endsWith(".xml"))
+                    {
+                        copyFilteredFile(new File(sourceDirectory, fileName),
+                                new File(openfirePluginDirectory, fileName), null, getFilterWrappers(),
+                                filterProperties);
+                    }
+                    else
+                    {
+                        copyFileIfModified(new File(sourceDirectory, fileName),
+                                new File(openfirePluginDirectory, fileName));
+                    }
                 }
             }
         }
@@ -357,7 +374,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
      * Classes and libraries are copied to
      * <tt>openfirePluginDirectory</tt> during this phase.
      *
-     * @param project         the maven project
+     * @param project                 the maven project
      * @param openfirePluginDirectory
      * @throws java.io.IOException if an error occured while building the webapp
      */
@@ -388,6 +405,10 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
 
         copyResources(warSourceDirectory, new File(openfirePluginDirectory, "web"));
         copyOpenfirePluginConfiguration(openfireSourceDirectory, openfirePluginDirectory, filterProperties);
+        if (databaseSourceDirectory.exists())
+        {
+            copyDirectoryStructureIfModified(databaseSourceDirectory, openfirePluginDirectory);
+        }
 
         if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
         {
