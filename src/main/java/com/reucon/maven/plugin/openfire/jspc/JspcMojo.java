@@ -15,8 +15,6 @@
 
 package com.reucon.maven.plugin.openfire.jspc;
 
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -37,18 +35,8 @@ import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.util.IO;
 
 /**
- *  <p>This goal will compile jsps for a webapp so that they can be included in a war.</p>
- *  <p>At runtime, the plugin will use the jsp2.0 jspc compiler if you are running
- *  on a 1.4 or lower jvm. If you are using a 1.5 jvm, then the jsp2.1 compiler will be selected.
- *  (this is the same behaviour as the <a href="http://jetty.mortbay.org/maven-plugin">jetty plugin</a> for executing webapps).
- *  </p>
- *  <p>
- *  Note that the same java compiler will be used as for on-the-fly compiled jsps, which will
- *  be the Eclipse java compiler.
- *  </p>
- *  
- *  <p>See <a href="howto.html">Usage</a> for instructions on using this plugin.
- *  </p>
+ * This goal will compile jsps for an Openfire Plugin so that they can be included in the jar.
+ *
  * @author janb
  * 
  * @goal jspc

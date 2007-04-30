@@ -1,63 +1,129 @@
  ------
  Introduction
  ------
- Pete Marvin King
+ Stefan Reuter
  ------
- 27 June 2006
+ 30 April 2007
  ------
  
-~~ Copyright 2006 The Apache Software Foundation.
-~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
-~~
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
+Maven Openfire Plugin
 
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ The Maven Openfire Plugin is responsible for collecting all artifact dependencies, classes
+ and resources of an Openfire plugin and packaging them into a jar suitable for deployment
+ to an Openfire XMPP server.
 
-Maven WAR Plugin
+ This plugin is based on the Maven WAR Plugin and the Jetty JSPC Plugin.
 
- The war plugin is responsible for collecting all artifact dependencies, classes
- and resources of the web application and packaging them into a web application archive.
- 
 * Goals Overview
 
- * {{{war-mojo.html}war:war}} is the default goal invoked during the package phase for projects with a package type of war.
- 
- * {{{exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
- an exploded war in a specified directory.    
- 
- * {{{inplace-mojo.html}war:inplace}} another variation of the war:explode where the war is instead generated in the web source directory
- which is <<<src/main/webapp>>> by default.
+ * {{{openfire-plugin-mojo.html}openfire:openfire-plugin}} is the default goal invoked during the package phase
+ for projects with a package type of openfire-plugin.
  
 * Usage
 
-  Instructions on how to use the Maven WAR Plugin can be found {{{usage.html}here}}.
+  Your project layout should conform to the maven standard with some extensions for Openfire:
 
-* Examples
- 
- To provide you with better understanding on some usages of the Maven WAR Plugin,
- you can take a look into the following examples:
- 
- * {{{examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
- 
- * {{{examples/war-overlay.html}Manipulating WAR Overlays}}
- 
- * {{{examples/war-manifest-guide.html}War Manifest Customization}}
++----------+
+myplugin
+ |- pom.xml                     <- Maven POM
+ `- src
+     `- main
+         |- database            <- Optional database scripts for your plugin
+         |- java                <- Java source code for your plugin
+         |   `- com
+         |       `- mycompany
+         |           `- *.java
+         |- openfire
+         |   |- plugin.xml      <- Plugin definition file
+         |   |- readme.html     <- Optional readme file for plugin
+         |   |- changelog.html  <- Optional changelog file for plugin
+         |   |- icon_small.png  <- Optional small (16x16) icon associated with the plugin
+         |   `- icon_large.png  <- Optional large (32x32) icon associated with the plugin
+         `- webapp
+             |- *.jsp           <- JSPs your plugin uses for the admin console
+             |- images          <- Any images your JSP pages need (optional)
+             `- WEB-INF
+                 `- web.xml     <- Optional file where custom servlets can be registered
++----------+
 
- * {{{examples/rapid-testing-jetty6-plugin.html}Rapid Testing Using Jetty6}}
+  To use this plugin you must set the packaging of your maven project to openfire-plugin and include the
+  plugin in its pom.xml. You should also set the JDK to at least 1.5 as thats what Openfire requires anyway:
 
- * {{{examples/skinny-wars.html}Creating Skinny WARs}}
- 
++----------+
+<project>
+  [...]
+  <groupId>com.reucon.openfire.plugins.archiver</groupId>
+  <artifactId>archiver</artifactId>
+  <packaging>openfire-plugin</packaging>
+  <version>1.0-SNAPSHOT</version>
+  [...]
+  <dependencies>
+    <dependency>
+      <groupId>org.jivesoftware.openfire</groupId>
+      <artifactId>openfire</artifactId>
+      <version>3.3.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.reucon.maven.plugins</groupId>
+        <artifactId>maven-openfire-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <jspPackageName>com.reucon.openfire.plugins.archiver.jsp</jspPackageName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
++----------+
+
+  The <<<jspPackageName>>> property is optional and specifies the Java package name to use for your
+  JSP classes. It defaults to <<<${pom.groupId}.jsp>>>.
+
+  Your Openfire Plugin specific files like plugin.xml, readme.html and changelog.html are placed into
+  <<<src/main/openfire>>>. They are filtered so you can reuse meta information from your POM there.
+  A simple plugin.xml might look like this:
+
++----------+
+<plugin>
+  <!-- Main plugin class -->
+  <class>com.reucon.openfire.plugins.archiver.ArchiverPlugin</class>
+
+  <!-- Plugin meta-data -->
+  <name>${pom.name}</name>
+  <description>${pom.description}</description>
+  <author>${pom.organization.name}</author>
+  <version>${pom.version}</version>
+  <date>${openfire-plugin.build.date}</date>
+  <minServerVersion>3.3.0</minServerVersion>
+  <licenseType>gpl</licenseType>
+
+  <!-- Admin console meta-data -->
+  <adminconsole>
+
+  </adminconsole>
+</plugin>
++----------+
+
+  <<<${openfire-plugin.build.date}>>> is a special property provided by the plugin that contains the build date in the
+  format required by Openfire ("MM/dd/yyyy").
+
+  If your Openfire Plugin contains database scripts, place them into <<<src/main/database>>> and
+  <<<src/main/database/upgrade>>>. 
+
 * Related links
  
-  * {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
+  * {{{http://www.igniterealtime.org/projects/openfire/}Openfire Homepage}}
+
+  * {{{http://www.igniterealtime.org/builds/openfire/docs/latest/documentation/plugin-dev-guide.html}Openfire: Plugin Developer Guide}}
  

@@ -13,6 +13,8 @@ import org.codehaus.plexus.util.*;
 
 import java.io.*;
 import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public abstract class AbstractOpenfireMojo extends AbstractMojo
 {
@@ -253,6 +255,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
 
         // Project properties
         filterProperties.putAll(project.getProperties());
+        filterProperties.put("openfire-plugin.build.date", new SimpleDateFormat("MM/dd/yyyy").format(new Date()));
 
         for (String filtersfile : (List<String>) filters)
         {

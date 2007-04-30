@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Generate a manifest for this WAR.
+ * Generate a manifest for the Openfire Plugin.
  *
  * @author Mike Perham
  * @version $Id: OpenfireMojo.java 307363 2005-10-09 04:50:58Z brett $
