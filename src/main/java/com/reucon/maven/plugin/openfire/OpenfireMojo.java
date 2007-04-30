@@ -66,14 +66,6 @@ public class OpenfireMojo extends AbstractOpenfireMojo
     private String classifier;
 
     /**
-     * The Jar archiver.
-     *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#openfire-plugin}"
-     * @required
-     */
-    private OpenfireArchiver openfireArchiver;
-
-    /**
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -163,14 +155,12 @@ public class OpenfireMojo extends AbstractOpenfireMojo
         getLog().info("Generating Openfire Plugin " + warFile.getAbsolutePath());
 
         MavenArchiver archiver = new MavenArchiver();
-        OpenfireArchiver openfireArchiver = new OpenfireArchiver();
 
-        archiver.setArchiver(openfireArchiver);
+        archiver.setArchiver(jarArchiver);
 
         archiver.setOutputFile(warFile);
 
-        openfireArchiver.addDirectory(getOpenfirePluginDirectory(), getIncludes(), getExcludes());
-        openfireArchiver.addWebXml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
+        jarArchiver.addDirectory(getOpenfirePluginDirectory(), getIncludes(), getExcludes());
 
         //openfireArchiver.setWebxml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
 

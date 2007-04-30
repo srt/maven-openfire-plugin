@@ -56,7 +56,7 @@ public class OpenfireManifestMojo extends AbstractOpenfireMojo
         }
         File manifestFile = new File(manifestDir, "MANIFEST.MF");
         MavenArchiver ma = new MavenArchiver();
-        ma.setArchiver(new OpenfireArchiver());
+        ma.setArchiver(jarArchiver);
         ma.setOutputFile(manifestFile);
 
         PrintWriter printWriter = null;

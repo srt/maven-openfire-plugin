@@ -34,10 +34,5 @@
                 <addedToClasspath>false</addedToClasspath>
             </configuration>
         </component>
-        <component>
-            <role>org.codehaus.plexus.archiver.Archiver</role>
-            <role-hint>openfire-plugin</role-hint>
-            <implementation>com.reucon.maven.plugin.openfire.OpenfireArchiver</implementation>
-        </component>
     </components>
 </component-set>

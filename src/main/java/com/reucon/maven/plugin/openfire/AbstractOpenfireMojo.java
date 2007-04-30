@@ -40,7 +40,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      * @required
      */
-    private JarArchiver jarArchiver;
+    protected JarArchiver jarArchiver;
 
     /**
      * The directory where the Openfire Plugin is built.
@@ -204,12 +204,6 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         if (StringUtils.isNotEmpty(warSourceExcludes))
         {
             excludeList.addAll(Arrays.asList(StringUtils.split(warSourceExcludes, ",")));
-        }
-
-        // if webXML is specified, omit the one in the source directory
-        if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
-        {
-            excludeList.add("**/" + WEB_INF + "/web.xml");
         }
 
         return excludeList.toArray(EMPTY_STRING_ARRAY);
