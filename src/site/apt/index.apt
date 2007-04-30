@@ -26,24 +26,24 @@ Maven Openfire Plugin
 +----------+
 myplugin
  |- pom.xml                     <- Maven POM
- `- src
-     `- main
-         |- database            <- Optional database scripts for your plugin
-         |- java                <- Java source code for your plugin
-         |   `- com
-         |       `- mycompany
-         |           `- *.java
-         |- openfire
-         |   |- plugin.xml      <- Plugin definition file
-         |   |- readme.html     <- Optional readme file for plugin
-         |   |- changelog.html  <- Optional changelog file for plugin
-         |   |- icon_small.png  <- Optional small (16x16) icon associated with the plugin
-         |   `- icon_large.png  <- Optional large (32x32) icon associated with the plugin
-         `- webapp
-             |- *.jsp           <- JSPs your plugin uses for the admin console
-             |- images          <- Any images your JSP pages need (optional)
-             `- WEB-INF
-                 `- web.xml     <- Optional file where custom servlets can be registered
+ `-- src
+     `-- main
+         |-- database            <- Optional database scripts for your plugin
+         |-- java                <- Java source code for your plugin
+         |   `-- com
+         |       `-- mycompany
+         |           `-- *.java
+         |-- openfire
+         |   |-- plugin.xml      <- Plugin definition file
+         |   |-- readme.html     <- Optional readme file for plugin
+         |   |-- changelog.html  <- Optional changelog file for plugin
+         |   |-- icon_small.png  <- Optional small (16x16) icon associated with the plugin
+         |   `-- icon_large.png  <- Optional large (32x32) icon associated with the plugin
+         `-- webapp
+             |-- *.jsp           <- JSPs your plugin uses for the admin console
+             |-- images          <- Any images your JSP pages need (optional)
+             `-- WEB-INF
+                 `-- web.xml     <- Deployment descriptor for custom servlets
 +----------+
 
   To use this plugin you must set the packaging of your maven project to openfire-plugin and include the
