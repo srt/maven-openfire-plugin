@@ -170,8 +170,9 @@ public class OpenfireMojo extends AbstractOpenfireMojo
         archiver.setOutputFile(warFile);
 
         openfireArchiver.addDirectory(getOpenfirePluginDirectory(), getIncludes(), getExcludes());
+        openfireArchiver.addWebXml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
 
-        openfireArchiver.setWebxml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
+        //openfireArchiver.setWebxml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
 
         // create archive
         archiver.createArchive(getProject(), archive);

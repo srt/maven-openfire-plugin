@@ -1,11 +1,12 @@
 package com.reucon.maven.plugin.openfire;
 
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 
 import java.io.File;
 
-public class OpenfireArchiver extends WarArchiver
+public class OpenfireArchiver extends JarArchiver
 {
     public OpenfireArchiver()
     {
@@ -30,5 +31,10 @@ public class OpenfireArchiver extends WarArchiver
     public void addClasses(File directoryName, String[] includes, String[] excludes) throws ArchiverException
     {
         addDirectory(directoryName, "classes/", includes, excludes);
+    }
+
+    public void addWebXml(File fileName) throws ArchiverException
+    {
+        addDirectory(fileName.getParentFile(), "web/WEB-INF/", new String[]{fileName.getName()}, null);
     }
 }

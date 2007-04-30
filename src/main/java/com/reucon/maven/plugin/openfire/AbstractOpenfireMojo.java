@@ -1,7 +1,6 @@
 package com.reucon.maven.plugin.openfire;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.model.Resource;
@@ -60,6 +59,15 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     private File warSourceDirectory;
 
     /**
+     * Single directory for Openfire Plugin configuration files like <tt>plugin.xml</tt>,
+     * <tt>changelog.html</tt> and <tt>readme.html</tt>.
+     *
+     * @parameter expression="${basedir}/src/main/openfire"
+     * @required
+     */
+    private File openfireSourceDirectory;
+
+    /**
      * The list of webResources we want to transfer.
      *
      * @parameter
@@ -74,9 +82,9 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     private List filters;
 
     /**
-     * The path to the web.xml file to use, old default was ${maven.war.webxml}.
+     * The path to the web.xml file to use, original default was ${maven.war.webxml}.
      *
-     * @parameter expression="${basedir}/target/jspweb.xml"
+     * @parameter expression="${basedir}/target/web.xml"
      */
     private File webXml;
 
@@ -315,12 +323,11 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
      * @param webappDirectory the target directory
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources(File sourceDirectory, File webappDirectory)
-            throws IOException
+    public void copyResources(File sourceDirectory, File webappDirectory) throws IOException
     {
         if (!sourceDirectory.equals(webappDirectory))
         {
-            getLog().info("Copy webapp webResources to " + webappDirectory.getAbsolutePath());
+            getLog().info("Copying webResources to " + webappDirectory.getAbsolutePath());
             if (warSourceDirectory.exists())
             {
                 String[] fileNames = getWarFiles(sourceDirectory);
@@ -332,34 +339,21 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         }
     }
 
-    /**
-     * Generates the JAR.
-     *
-     * @todo Add license files in META-INF directory.
-     */
-    public void createJarArchive(File libDirectory)
-            throws MojoExecutionException
+    private void copyOpenfirePluginConfiguration(File sourceDirectory, File webappDirectory, Map filterProperties) throws IOException
     {
-        String archiveName = project.getBuild().getFinalName() + ".jar";
-
-        File jarFile = new File(libDirectory, archiveName);
-
-        MavenArchiver archiver = new MavenArchiver();
-
-        archiver.setArchiver(jarArchiver);
-
-        archiver.setOutputFile(jarFile);
-
-        try
+        if (!sourceDirectory.equals(webappDirectory))
         {
-            archiver.getArchiver().addDirectory(classesDirectory, getIncludes(), getExcludes());
-
-            archiver.createArchive(project, archive);
-        }
-        catch (Exception e)
-        {
-            // TODO: improve error handling
-            throw new MojoExecutionException("Error assembling JAR", e);
+            getLog().info("Copying Openfire Plugin configuration to " + webappDirectory.getAbsolutePath());
+            if (warSourceDirectory.exists())
+            {
+                String[] fileNames = getWarFiles(sourceDirectory);
+                for (String fileName : fileNames)
+                {
+                    copyFilteredFile(new File(sourceDirectory, fileName),
+                            new File(webappDirectory, fileName), null, getFilterWrappers(),
+                            filterProperties);
+                }
+            }
         }
     }
 
@@ -381,24 +375,25 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         File webinfDir = new File(openfirePluginDirectory, "web" + File.separator + WEB_INF);
         webinfDir.mkdirs();
 
-        File metainfDir = new File(openfirePluginDirectory, "web" + File.separator + META_INF);
+        File metainfDir = new File(openfirePluginDirectory, META_INF);
         metainfDir.mkdirs();
 
-        List<Resource> webResources = this.webResources != null ? Arrays.asList(this.webResources) : null;
+        final Map filterProperties = getBuildFilterProperties();
+        final List<Resource> webResources = this.webResources != null ? Arrays.asList(this.webResources) : null;
         if (webResources != null && webResources.size() > 0)
         {
-            Map filterProperties = getBuildFilterProperties();
             for (Resource resource : webResources)
             {
                 if (!(new File(resource.getDirectory())).isAbsolute())
                 {
                     resource.setDirectory(project.getBasedir() + File.separator + resource.getDirectory());
                 }
-                copyResources(resource, openfirePluginDirectory, filterProperties);
+                copyResources(resource, new File(openfirePluginDirectory, "web"), filterProperties);
             }
         }
 
         copyResources(warSourceDirectory, new File(openfirePluginDirectory, "web"));
+        copyOpenfirePluginConfiguration(openfireSourceDirectory, openfirePluginDirectory, filterProperties);
 
         if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
         {
