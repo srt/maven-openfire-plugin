@@ -18,17 +18,13 @@ package com.reucon.maven.plugin.openfire.jspc;
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.jasper.JspC;
 import org.apache.maven.artifact.Artifact;
@@ -119,13 +115,13 @@ public class JspcMojo extends AbstractMojo
     
     
     /**
-     * Default root package for all generated classes
-     * @parameter expression="jsp"
+     * Default root package for all generated JSP classes.
+     * @parameter expression="${project.groupId}.jsp"
      */
-    private String packageRoot;
+    private String jspPackageRoot;
 
     /**
-     * Root directory for all html/jsp etc files
+     * Root directory for all html/jsp etc files.
      *
      * @parameter expression="${basedir}/src/main/webapp"
      * @required
@@ -134,7 +130,7 @@ public class JspcMojo extends AbstractMojo
 
     
     /**
-     * The location of the compiled classes for the webapp
+     * The location of the compiled classes for the webapp.
      * 
      * @parameter expression="${project.build.outputDirectory}"
      */
@@ -198,7 +194,7 @@ public class JspcMojo extends AbstractMojo
             getLog().info("generatedClasses="+generatedClasses);
             getLog().info("webXmlFragment="+webXmlFragment);
             getLog().info("validateXml="+validateXml);
-            getLog().info("packageRoot="+packageRoot);
+            getLog().info("jspPackageRoot="+ jspPackageRoot);
             getLog().info("javaEncoding="+javaEncoding);
             getLog().info("insertionMarker="+(insertionMarker==null||insertionMarker.equals("")?END_OF_WEBAPP:insertionMarker));
             getLog().info("keepSources="+keepSources);
@@ -248,7 +244,7 @@ public class JspcMojo extends AbstractMojo
         jspc.setWebXmlFragment(webXmlFragment);
         jspc.setUriroot(webAppSourceDirectory);
         
-        jspc.setPackage(packageRoot);
+        jspc.setPackage(jspPackageRoot);
         jspc.setOutputDir(generatedClasses);
         jspc.setValidateXml(validateXml);
         jspc.setClassPath(classpathStr.toString());
