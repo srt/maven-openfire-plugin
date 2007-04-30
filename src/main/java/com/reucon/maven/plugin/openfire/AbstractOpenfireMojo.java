@@ -410,7 +410,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         copyOpenfirePluginConfiguration(openfireSourceDirectory, openfirePluginDirectory, filterProperties);
         if (databaseSourceDirectory.exists())
         {
-            copyDirectoryStructureIfModified(databaseSourceDirectory, openfirePluginDirectory);
+            copyDirectoryStructureIfModified(databaseSourceDirectory, new File(openfirePluginDirectory, "database"));
         }
 
         if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
