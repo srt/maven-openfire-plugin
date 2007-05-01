@@ -407,11 +407,11 @@ public class JspcMojo extends AbstractMojo
         classesDir = classesDir + (classesDir.endsWith(File.pathSeparator)?"":File.separator);
         classLoader.addClassPath(classesDir);
         if (getLog().isDebugEnabled()) getLog().debug("Adding to classpath classes dir: "+classesDir);
-        
-        for ( Iterator iter = project.getArtifacts().iterator(); iter.hasNext(); )
+
+        for ( Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            
+
             // Include runtime and compile time libraries
             if (!Artifact.SCOPE_TEST.equals( artifact.getScope()) )
             {

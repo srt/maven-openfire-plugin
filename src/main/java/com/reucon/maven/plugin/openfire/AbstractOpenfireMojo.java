@@ -78,6 +78,14 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     private File databaseSourceDirectory;
 
     /**
+     * Single directory for Openfire Plugin i18n resources.
+     *
+     * @parameter expression="${basedir}/src/main/i18n"
+     * @required
+     */
+    private File i18nSourceDirectory;
+
+    /**
      * The list of webResources we want to transfer.
      *
      * @parameter
@@ -411,6 +419,10 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         if (databaseSourceDirectory.exists())
         {
             copyDirectoryStructureIfModified(databaseSourceDirectory, new File(openfirePluginDirectory, "database"));
+        }
+        if (i18nSourceDirectory.exists())
+        {
+            copyDirectoryStructureIfModified(i18nSourceDirectory, new File(openfirePluginDirectory, "i18n"));
         }
 
         if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
