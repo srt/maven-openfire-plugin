@@ -122,8 +122,8 @@ myplugin
   <<<src/main/database/upgrade>>>.
 
   Note that your i18n properties and database scripts must have the name of your plugin.
-  If your plugin is called "my-plugin" your properties would be called <<<my-plugin.properties>>>,
-  <<<my-plugin_de.properties>>>, etc. Your database scripts would be called <<<my-plugin_mysql.sql>>>,
+  If your plugin is called "my-plugin" your properties would be called <<<my-plugin_i18n.properties>>>,
+  <<<my-plugin_i18n_de.properties>>>, etc. Your database scripts would be called <<<my-plugin_mysql.sql>>>,
   <<<my-plugin_hsql.sql>>>, etc.
 
 * Related links
