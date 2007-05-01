@@ -25,7 +25,7 @@ Maven Openfire Plugin
 
 +----------+
 myplugin
- |- pom.xml                     <- Maven POM
+ |- pom.xml                      <- Maven POM
  `-- src
      `-- main
          |-- database            <- Optional database scripts for your plugin
@@ -37,8 +37,8 @@ myplugin
          |   |-- plugin.xml      <- Plugin definition file
          |   |-- readme.html     <- Optional readme file for plugin
          |   |-- changelog.html  <- Optional changelog file for plugin
-         |   |-- icon_small.png  <- Optional small (16x16) icon associated with the plugin
-         |   `-- icon_large.png  <- Optional large (32x32) icon associated with the plugin
+         |   |-- logo_small.png  <- Optional small (16x16) icon associated with the plugin
+         |   `-- logo_large.png  <- Optional large (32x32) icon associated with the plugin
          `-- webapp
              |-- *.jsp           <- JSPs your plugin uses for the admin console
              |-- images          <- Any images your JSP pages need (optional)
@@ -119,7 +119,12 @@ myplugin
   format required by Openfire ("MM/dd/yyyy").
 
   If your Openfire Plugin contains database scripts, place them into <<<src/main/database>>> and
-  <<<src/main/database/upgrade>>>. 
+  <<<src/main/database/upgrade>>>.
+
+  Note that your i18n properties and database scripts must have the name of your plugin.
+  If your plugin is called "my-plugin" your properties would be called <<<my-plugin.properties>>>,
+  <<<my-plugin_de.properties>>>, etc. Your database scripts would be called <<<my-plugin_mysql.sql>>>,
+  <<<my-plugin_hsql.sql>>>, etc.
 
 * Related links
  
