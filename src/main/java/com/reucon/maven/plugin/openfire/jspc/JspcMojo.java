@@ -15,15 +15,6 @@
 
 package com.reucon.maven.plugin.openfire.jspc;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.util.Iterator;
-
 import org.apache.jasper.JspC;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,6 +24,12 @@ import org.apache.maven.project.MavenProject;
 import org.mortbay.jetty.webapp.WebAppClassLoader;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.util.IO;
+
+import java.io.*;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * This goal will compile jsps for an Openfire Plugin so that they can be included in the jar.
@@ -400,25 +397,38 @@ public class JspcMojo extends AbstractMojo
      * @param classLoader we use a Jetty WebAppClassLoader to load the classes
      * @throws Exception
      */
-    private void setUpClassPath(WebAppClassLoader classLoader)
-    throws Exception
+    private void setUpClassPath(WebAppClassLoader classLoader) throws Exception
     {       
         String classesDir = classesDirectory.getCanonicalPath();
         classesDir = classesDir + (classesDir.endsWith(File.pathSeparator)?"":File.separator);
         classLoader.addClassPath(classesDir);
         if (getLog().isDebugEnabled()) getLog().debug("Adding to classpath classes dir: "+classesDir);
 
-        for ( Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext(); )
+        Collection artifactsAdded = new HashSet();
+        for ( Iterator iter = project.getArtifacts().iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
+            String filePath = artifact.getFile().getCanonicalPath();
 
-            // Include runtime and compile time libraries
             if (!Artifact.SCOPE_TEST.equals( artifact.getScope()) )
             {
-                String filePath = artifact.getFile().getCanonicalPath();
                 if (getLog().isDebugEnabled())
                     getLog().debug("Adding to classpath dependency file: "+filePath);
                     
+                classLoader.addClassPath(filePath);
+                artifactsAdded.add(filePath);
+            }
+        }
+        for ( Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String filePath = artifact.getFile().getCanonicalPath();
+
+            if (!Artifact.SCOPE_TEST.equals( artifact.getScope()) && ! artifactsAdded.contains(filePath))
+            {
+                if (getLog().isDebugEnabled())
+                    getLog().debug("Adding to classpath dependency file: "+filePath);
+
                 classLoader.addClassPath(filePath);
             }
         }
