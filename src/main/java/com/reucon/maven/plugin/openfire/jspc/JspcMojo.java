@@ -38,7 +38,7 @@ import java.util.Iterator;
  * 
  * @goal jspc
  * @phase process-classes
- * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution compile
  * @description Runs jspc compiler to produce .java and .class files
  */
 public class JspcMojo extends AbstractMojo
@@ -404,7 +404,6 @@ public class JspcMojo extends AbstractMojo
         classLoader.addClassPath(classesDir);
         if (getLog().isDebugEnabled()) getLog().debug("Adding to classpath classes dir: "+classesDir);
 
-        Collection artifactsAdded = new HashSet();
         for ( Iterator iter = project.getArtifacts().iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -415,20 +414,6 @@ public class JspcMojo extends AbstractMojo
                 if (getLog().isDebugEnabled())
                     getLog().debug("Adding to classpath dependency file: "+filePath);
                     
-                classLoader.addClassPath(filePath);
-                artifactsAdded.add(filePath);
-            }
-        }
-        for ( Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext(); )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String filePath = artifact.getFile().getCanonicalPath();
-
-            if (!Artifact.SCOPE_TEST.equals( artifact.getScope()) && ! artifactsAdded.contains(filePath))
-            {
-                if (getLog().isDebugEnabled())
-                    getLog().debug("Adding to classpath dependency file: "+filePath);
-
                 classLoader.addClassPath(filePath);
             }
         }
