@@ -19,6 +19,14 @@ Maven Openfire Plugin
   The Maven Openfire Plugin is currently only available in source from SVN at
   {{{http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk/}}}.
 
+  To install the plugin check it out from and call <<<mvn install>>>
+
++----------+
+svn co http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk maven-openfire-plugin
+cd maven-openfire-plugin
+mvn clean install
++----------+
+
   Your plugins will depend on <<<openfire.jar>>> which is part of the Openfire
   distribution but not yet available through the official maven repositories so you
   have to install it manually to your local repository.
