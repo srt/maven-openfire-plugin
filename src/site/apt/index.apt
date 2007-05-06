@@ -107,7 +107,7 @@ myplugin
         <artifactId>maven-openfire-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <jspPackageName>com.reucon.openfire.plugins.archiver.jsp</jspPackageName>
+          <jspPackageName>com.example.openfire.plugins.myplugin.jsp</jspPackageName>
         </configuration>
       </plugin>
     </plugins>
