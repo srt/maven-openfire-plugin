@@ -10,9 +10,26 @@ Maven Openfire Plugin
 
  The Maven Openfire Plugin is responsible for collecting all artifact dependencies, classes
  and resources of an Openfire plugin and packaging them into a jar suitable for deployment
- to an Openfire XMPP server.
+ to an {{{http://www.igniterealtime.org/projects/openfire/}Openfire XMPP server}}.
 
  This plugin is based on the Maven WAR Plugin and the Jetty JSPC Plugin.
+
+* Installation
+
+  The Maven Openfire Plugin is currently only available in source from SVN at
+  {{{http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk/}}}.
+
+  Your plugins will depend on <<<openfire.jar>>> which is part of the Openfire
+  distribution but not yet available through the official maven repositories so you
+  have to install it manually to your local repository.
+
++----------+
+ mvn install:install-file -DgroupId=org.igniterealtime.openfire -DartifactId=openfire \
+                          -Dversion=3.3.0 -Dpackaging=jar -DgeneratePom=true \
+                          -Dfile=/opt/openfire/lib/openfire.jar
++----------+
+
+  This asumes you have installed Openfire 3.3.0 in <<</opt/openfire>>>.
 
 * Goals Overview
 
@@ -29,6 +46,9 @@ myplugin
  `-- src
      `-- main
          |-- database            <- Optional database scripts for your plugin
+         |-- i18n                <- Optional resources bundles for i18n
+         |                          (must be called myplugin_i18n.properties)
+         |-- resources           <- Optional additional resources for your plugin
          |-- java                <- Java source code for your plugin
          |   `-- com
          |       `-- mycompany
@@ -52,8 +72,8 @@ myplugin
 +----------+
 <project>
   [...]
-  <groupId>com.reucon.openfire.plugins.archiver</groupId>
-  <artifactId>archiver</artifactId>
+  <groupId>com.example.openfire.plugins</groupId>
+  <artifactId>myplugin</artifactId>
   <packaging>openfire-plugin</packaging>
   <version>1.0-SNAPSHOT</version>
   [...]
@@ -97,7 +117,7 @@ myplugin
 +----------+
 <plugin>
   <!-- Main plugin class -->
-  <class>com.reucon.openfire.plugins.archiver.ArchiverPlugin</class>
+  <class>com.example.openfire.plugins.myplugin.MyPlugin</class>
 
   <!-- Plugin meta-data -->
   <name>${pom.name}</name>
@@ -125,6 +145,15 @@ myplugin
   If your plugin is called "my-plugin" your properties would be called <<<my-plugin_i18n.properties>>>,
   <<<my-plugin_i18n_de.properties>>>, etc. Your database scripts would be called <<<my-plugin_mysql.sql>>>,
   <<<my-plugin_hsql.sql>>>, etc.
+
+  Now you are ready to build your Openfire plugin by simply calling <<<mvn install>>> from the top level
+  directory of your plugin (where your <<<pom.xml>>> is):
+
++----------+
+mvn clean install
++----------+
+
+  Your plugin is now available in your local maven repository and in the <<<target>>> directory.
 
 * Related links
  
