@@ -36,7 +36,8 @@
     </licenses>
     <scm>
         <connection>scm:svn:http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/trunk</developerConnection>
+        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/trunk
+        </developerConnection>
     </scm>
     <distributionManagement>
         <repository>
@@ -66,6 +67,17 @@
                 <configuration>
                     <tagBase>https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/tags</tagBase>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <extensions>
