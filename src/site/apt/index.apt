@@ -116,7 +116,7 @@ myplugin
 +----------+
 
   The <<<jspPackageName>>> property is optional and specifies the Java package name to use for your
-  JSP classes. It defaults to <<<${pom.groupId}.jsp>>>.
+  JSP classes. It defaults to <<<$\{pom.groupId\}.jsp>>>.
 
   Your Openfire Plugin specific files like plugin.xml, readme.html and changelog.html are placed into
   <<<src/main/openfire>>>. They are filtered so you can reuse meta information from your POM there.
@@ -143,7 +143,7 @@ myplugin
 </plugin>
 +----------+
 
-  <<<${openfire-plugin.build.date}>>> is a special property provided by the plugin that contains the build date in the
+  <<<$\{openfire-plugin.build.date\}>>> is a special property provided by the plugin that contains the build date in the
   format required by Openfire ("MM/dd/yyyy").
 
   If your Openfire Plugin contains database scripts, place them into <<<src/main/database>>> and
