@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+         xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'
+         xmlns='http://maven.apache.org/POM/4.0.0'>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.reucon.maven.plugins</groupId>
     <artifactId>maven-openfire-plugin</artifactId>
@@ -8,7 +10,7 @@
         resources of an Openfire plugin and packaging them into a jar suitable for deployment to an Openfire
         XMPP server.
     </description>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <prerequisites>
         <maven>2.0.1</maven>
     </prerequisites>
@@ -33,8 +35,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/tags/maven-openfire-plugin-1.0.0</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/tags/maven-openfire-plugin-1.0.0</developerConnection>
+        <connection>scm:svn:http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/trunk
+        </developerConnection>
     </scm>
     <distributionManagement>
         <repository>
@@ -126,3 +129,4 @@
         </dependency>
     </dependencies>
 </project>
+
