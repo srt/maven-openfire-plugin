@@ -33,11 +33,11 @@ mvn clean install
 
 +----------+
  mvn install:install-file -DgroupId=org.igniterealtime.openfire -DartifactId=openfire \
-                          -Dversion=3.3.0 -Dpackaging=jar -DgeneratePom=true \
+                          -Dversion=3.3.1 -Dpackaging=jar -DgeneratePom=true \
                           -Dfile=/opt/openfire/lib/openfire.jar
 +----------+
 
-  This asumes you have installed Openfire 3.3.0 in <<</opt/openfire>>>.
+  This asumes you have installed Openfire 3.3.1 in <<</opt/openfire>>>.
 
 * Goals Overview
 
@@ -87,9 +87,9 @@ myplugin
   [...]
   <dependencies>
     <dependency>
-      <groupId>org.jivesoftware.openfire</groupId>
+      <groupId>org.igniterealtime.openfire</groupId>
       <artifactId>openfire</artifactId>
-      <version>3.3.0</version>
+      <version>3.3.1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
