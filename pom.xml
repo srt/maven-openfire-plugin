@@ -1,32 +1,23 @@
-<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-         xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'
-         xmlns='http://maven.apache.org/POM/4.0.0'>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.reucon</groupId>
+        <artifactId>reucon-public-parent</artifactId>
+        <version>1</version>
+    </parent>
     <groupId>com.reucon.maven.plugins</groupId>
     <artifactId>maven-openfire-plugin</artifactId>
+    <version>1.0.1</version>
     <packaging>maven-plugin</packaging>
     <name>Maven Openfire Plugin</name>
     <description>The Maven Openfire Plugin is responsible for collecting all artifact dependencies, classes and
         resources of an Openfire plugin and packaging them into a jar suitable for deployment to an Openfire
         XMPP server.
     </description>
-    <version>1.0.0-SNAPSHOT</version>
+    <url>http://maven.reucon.com/projects/public/maven-openfire-plugin</url>
     <prerequisites>
         <maven>2.0.1</maven>
     </prerequisites>
-    <organization>
-        <name>reuter network consulting</name>
-        <url>http://www.reucon.com</url>
-    </organization>
-    <developers>
-        <developer>
-            <name>Stefan Reuter</name>
-            <id>srt</id>
-            <email>stefan.reuter at reucon.com</email>
-            <organization>reuter network consulting</organization>
-            <timezone>+1</timezone>
-        </developer>
-    </developers>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -35,58 +26,38 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/trunk
-        </developerConnection>
+        <connection>scm:svn:http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/tags/maven-openfire-plugin-1.0.1</connection>
+        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/tags/maven-openfire-plugin-1.0.1</developerConnection>
     </scm>
     <distributionManagement>
-        <repository>
-            <id>reucon</id>
-            <url>dav:https://secure.reucon.net/maven/public</url>
-        </repository>
-        <snapshotRepository>
-            <id>reucon</id>
-            <url>dav:https://secure.reucon.net/maven/public-snapshot</url>
-        </snapshotRepository>
         <site>
             <id>reucon</id>
             <url>dav:https://secure.reucon.net/maven/projects/public/${artifactId}/${version}</url>
         </site>
     </distributionManagement>
+    <repositories>
+        <repository>
+            <id>reucon</id>
+            <name>reucon public repository</name>
+            <url>http://maven.reucon.com/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <layout>default</layout>
+        </repository>
+    </repositories>    
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <tagBase>https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/tags</tagBase>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
     </build>
     <reporting>
         <plugins>
@@ -129,4 +100,3 @@
         </dependency>
     </dependencies>
 </project>
-
