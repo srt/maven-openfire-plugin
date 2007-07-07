@@ -427,13 +427,19 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
 
         if (webXml != null && StringUtils.isNotEmpty(webXml.getName()))
         {
-            if (!webXml.exists())
+            if (webXml.exists())
             {
-                throw new MojoFailureException("The specified web.xml file '" + webXml + "' does not exist");
+                //rename to web.xml
+                copyFileIfModified(webXml, new File(webinfDir, "/web.xml"));
             }
-
-            //rename to web.xml
-            copyFileIfModified(webXml, new File(webinfDir, "/web.xml"));
+            else
+            {
+                getLog().info("The web.xml file '" + webXml + "' does not exist: creating empty web.xml");
+                BufferedWriter out = new BufferedWriter(new FileWriter(new File(webinfDir, "/web.xml")));
+                out.write("<web-app>\n</web-app>");
+                out.close();
+                //throw new MojoFailureException("The specified web.xml file '" + webXml + "' does not exist");
+            }
         }
 
         File libDirectory = new File(openfirePluginDirectory, "lib");
