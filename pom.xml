@@ -7,13 +7,14 @@
     </parent>
     <groupId>com.reucon.maven.plugins</groupId>
     <artifactId>maven-openfire-plugin</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>Maven Openfire Plugin</name>
     <description>The Maven Openfire Plugin is responsible for collecting all artifact dependencies, classes and
         resources of an Openfire plugin and packaging them into a jar suitable for deployment to an Openfire
         XMPP server.
     </description>
-    <version>1.1.0-SNAPSHOT</version>
+    <url>http://maven.reucon.com/projects/public/maven-openfire-plugin</url>
     <prerequisites>
         <maven>2.0.1</maven>
     </prerequisites>
