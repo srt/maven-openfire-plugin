@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @version $Id: CompositeMap.java 480784 2006-11-30 00:07:45Z jvanzyl $
+ * @version $Id$
  * @todo merge with resources/assembly plugin
  */
 public class CompositeMap

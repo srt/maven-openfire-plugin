@@ -30,7 +30,7 @@ import java.util.Properties;
 
 /**
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
- * @version $Id: PropertyUtils.java 480784 2006-11-30 00:07:45Z jvanzyl $
+ * @version $Id$
  * @todo this is duplicated from the resources plugin - migrate to plexus-utils
  */
 public final class PropertyUtils

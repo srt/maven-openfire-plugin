@@ -35,7 +35,7 @@ import java.io.IOException;
  * Build an Openfire Plugin jar.
  *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id: OpenfireMojo.java 480784 2006-11-30 00:07:45Z jvanzyl $
+ * @version $Id$
  * @goal openfire-plugin
  * @phase package
  * @requiresDependencyResolution runtime

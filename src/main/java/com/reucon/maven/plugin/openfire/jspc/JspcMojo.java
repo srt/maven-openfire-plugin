@@ -1,5 +1,5 @@
 //========================================================================
-//$Id: JspcMojo.java 1410 2006-12-15 11:33:13Z janb $
+//$Id$
 //Copyright 2006 Mort Bay Consulting Pty. Ltd.
 //------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
