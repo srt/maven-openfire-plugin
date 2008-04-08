@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.reucon</groupId>
         <artifactId>reucon-public-parent</artifactId>
-        <version>1</version>
+        <version>2</version>
     </parent>
     <groupId>com.reucon.maven.plugins</groupId>
     <artifactId>maven-openfire-plugin</artifactId>
