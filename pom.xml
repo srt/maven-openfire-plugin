@@ -1,10 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.reucon</groupId>
-        <artifactId>reucon-public-parent</artifactId>
-        <version>2</version>
-    </parent>
     <groupId>com.reucon.maven.plugins</groupId>
     <artifactId>maven-openfire-plugin</artifactId>
     <version>1.0.2-SNAPSHOT</version>
@@ -48,7 +44,7 @@
             </snapshots>
             <layout>default</layout>
         </repository>
-    </repositories>    
+    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -57,13 +53,49 @@
                     <tagBase>https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/tags</tagBase>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
     <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </reporting>
