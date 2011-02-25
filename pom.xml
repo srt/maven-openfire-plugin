@@ -22,8 +22,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://svn.reucon.net/repos/maven/plugins/maven-openfire-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/maven/plugins/maven-openfire-plugin/trunk</developerConnection>
+        <connection>scm:git:git://github.com/srt/maven-openfire-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:srt/maven-openfire-plugin.git</developerConnection>
     </scm>
     <distributionManagement>
         <site>
