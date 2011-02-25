@@ -26,25 +26,19 @@
         <developerConnection>scm:git:git@github.com:srt/maven-openfire-plugin.git</developerConnection>
     </scm>
     <distributionManagement>
+        <repository>
+            <id>reucon</id>
+            <url>https://secure.reucon.net/nexus/content/repositories/opensource</url>
+        </repository>
+        <snapshotRepository>
+            <id>reucon</id>
+            <url>https://secure.reucon.net/nexus/content/repositories/opensource-snapshots</url>
+        </snapshotRepository>
         <site>
             <id>reucon</id>
             <url>dav:https://secure.reucon.net/maven/projects/public/${artifactId}/${version}</url>
         </site>
     </distributionManagement>
-    <repositories>
-        <repository>
-            <id>reucon</id>
-            <name>reucon public repository</name>
-            <url>http://maven.reucon.com/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <layout>default</layout>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
