@@ -1,5 +1,26 @@
 package com.reucon.maven.plugin.openfire;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
@@ -9,19 +30,18 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.util.*;
-
-import java.io.*;
-import java.util.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractOpenfireMojo extends AbstractMojo
 {
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -30,7 +50,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * The directory containing generated classes.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      * @required
      * @readonly
      */
@@ -39,7 +59,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      * @required
      */
     protected JarArchiver jarArchiver;
@@ -47,7 +67,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * The directory where the Openfire Plugin is built.
      *
-     * @parameter expression="${project.build.directory}/${project.build.finalName}"
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}"
      * @required
      */
     private File openfirePluginDirectory;
@@ -55,7 +75,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * Single directory for extra files to include in the WAR.
      *
-     * @parameter expression="${basedir}/src/main/webapp"
+     * @parameter default-value="${basedir}/src/main/webapp"
      * @required
      */
     private File warSourceDirectory;
@@ -64,7 +84,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
      * Single directory for Openfire Plugin configuration files like <tt>plugin.xml</tt>,
      * <tt>changelog.html</tt> and <tt>readme.html</tt>.
      *
-     * @parameter expression="${basedir}/src/main/openfire"
+     * @parameter default-value="${basedir}/src/main/openfire"
      * @required
      */
     private File openfireSourceDirectory;
@@ -72,7 +92,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * Single directory for Openfire Plugin database scripts.
      *
-     * @parameter expression="${basedir}/src/main/database"
+     * @parameter default-value="${basedir}/src/main/database"
      * @required
      */
     private File databaseSourceDirectory;
@@ -80,7 +100,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * Single directory for Openfire Plugin i18n resources.
      *
-     * @parameter expression="${basedir}/src/main/i18n"
+     * @parameter default-value="${basedir}/src/main/i18n"
      * @required
      */
     private File i18nSourceDirectory;
@@ -95,14 +115,14 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
      *
-     * @parameter expression="${project.build.filters}"
+     * @parameter property="project.build.filter"
      */
     private List filters;
 
     /**
      * The path to the web.xml file to use, original default was ${maven.war.webxml}.
      *
-     * @parameter expression="${basedir}/target/web.xml"
+     * @parameter default-value="${basedir}/target/web.xml"
      */
     private File webXml;
 

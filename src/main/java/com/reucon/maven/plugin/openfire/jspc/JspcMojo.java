@@ -15,21 +15,24 @@
 
 package com.reucon.maven.plugin.openfire.jspc;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.Iterator;
+
 import org.apache.jasper.JspC;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.mortbay.jetty.webapp.WebAppClassLoader;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.util.IO;
-
-import java.io.*;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import org.eclipse.jetty.util.IO;
+import org.eclipse.jetty.webapp.WebAppClassLoader;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * This goal will compile jsps for an Openfire Plugin so that they can be included in the jar.
@@ -47,7 +50,7 @@ public class JspcMojo extends AbstractMojo
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -58,7 +61,7 @@ public class JspcMojo extends AbstractMojo
      * File into which to generate the &lt;servlet&gt; and &lt;servlet-mapping&gt;
      * tags for the compiled jsps
      *
-     * @parameter expression="${basedir}/target/webfrag.xml"
+     * @parameter default-value="${basedir}/target/webfrag.xml"
      */
     private String webXmlFragment;
 
@@ -78,7 +81,7 @@ public class JspcMojo extends AbstractMojo
      * webAppSourceDirectory. The merged file will go into the same
      * directory as the webXmlFragment.
      *
-     * @parameter expression="true"
+     * @parameter default-value="true"
      */
     private boolean mergeFragment;
 
@@ -86,7 +89,7 @@ public class JspcMojo extends AbstractMojo
      * The destination directory into which to put the
      * compiled jsps.
      *
-     * @parameter expression="${basedir}/target/classes"
+     * @parameter default-value="${basedir}/target/classes"
      */
     private String generatedClasses;
 
@@ -94,7 +97,7 @@ public class JspcMojo extends AbstractMojo
     /**
      * Controls whether or not .java files generated during compilation will be preserved.
      *
-     * @parameter expression="false"
+     * @parameter default-value="false"
      */
     private boolean keepSources;
 
@@ -102,14 +105,14 @@ public class JspcMojo extends AbstractMojo
     /**
      * Default root package for all generated JSP classes.
      *
-     * @parameter expression="${project.groupId}.jsp"
+     * @parameter default-value="${project.groupId}.jsp"
      */
     private String jspPackageRoot;
 
     /**
      * Root directory for all html/jsp etc files.
      *
-     * @parameter expression="${basedir}/src/main/webapp"
+     * @parameter default-value="${basedir}/src/main/webapp"
      * @required
      */
     private String webAppSourceDirectory;
@@ -118,14 +121,14 @@ public class JspcMojo extends AbstractMojo
     /**
      * The location of the compiled classes for the webapp.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      */
     private File classesDirectory;
 
     /**
      * Whether or not to output more verbose messages during compilation.
      *
-     * @parameter expression="false";
+     * @parameter default-value="false";
      */
     private boolean verbose;
 
@@ -133,7 +136,7 @@ public class JspcMojo extends AbstractMojo
     /**
      * If true, validates tlds when parsing.
      *
-     * @parameter expression="false";
+     * @parameter default-value="false";
      */
     private boolean validateXml;
 
@@ -141,7 +144,7 @@ public class JspcMojo extends AbstractMojo
     /**
      * The encoding scheme to use.
      *
-     * @parameter expression="UTF-8"
+     * @parameter default-value="${project.build.sourceEncoding}"
      */
     private String javaEncoding;
 
@@ -149,7 +152,7 @@ public class JspcMojo extends AbstractMojo
     /**
      * Whether or not to generate JSR45 compliant debug info
      *
-     * @parameter expression="true";
+     * @parameter default-value="true";
      */
     private boolean suppressSmap;
 
@@ -158,7 +161,7 @@ public class JspcMojo extends AbstractMojo
      * Whether or not to ignore precompilation errors caused by
      * jsp fragments.
      *
-     * @parameter expression="false"
+     * @parameter default-value="false"
      */
     private boolean ignoreJspFragmentErrors;
 
@@ -170,6 +173,20 @@ public class JspcMojo extends AbstractMojo
      * @parameter
      */
     private String schemaResourcePrefix;
+
+    /**
+     * The -source argument for the Java compiler for JSP compiling.
+     *  
+     * @parameter default-value="1.6"
+     */
+    private String jspCompilerSource;
+
+    /**
+     * The -target argument for the Java compiler for JSP compiling.
+     * 
+     * @parameter default-value="1.6"
+     */
+    private String jspCompilerTarget;
 
 
     public void execute() throws MojoExecutionException, MojoFailureException
@@ -199,6 +216,7 @@ public class JspcMojo extends AbstractMojo
         }
         catch (Exception e)
         {
+          getLog().error(e);
             throw new MojoFailureException(e, "Failure processing jsps", "Failure processing jsps");
         }
     }
@@ -245,6 +263,8 @@ public class JspcMojo extends AbstractMojo
         jspc.setSmapSuppressed(suppressSmap);
         jspc.setSmapDumped(!suppressSmap);
         jspc.setJavaEncoding(javaEncoding);
+        jspc.setCompilerSourceVM(jspCompilerSource);
+        jspc.setCompilerTargetVM(jspCompilerTarget);
 
         //Glassfish jspc only checks
 

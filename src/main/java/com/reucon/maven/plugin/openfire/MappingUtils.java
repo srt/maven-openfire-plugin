@@ -19,17 +19,18 @@ package com.reucon.maven.plugin.openfire;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;
-import org.codehaus.plexus.util.interpolation.ValueSource;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.interpolation.AbstractValueSource;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.ValueSource;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Utiities used to eveluate expression.
@@ -80,13 +81,14 @@ class MappingUtils
 
 
     static class PropertiesInterpolationValueSource
-            implements ValueSource
+            extends AbstractValueSource implements ValueSource 
     {
 
         private final Properties properties;
 
         public PropertiesInterpolationValueSource(Properties properties)
         {
+          super(true);
             this.properties = properties;
         }
 
