@@ -117,7 +117,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
      *
      * @parameter property="project.build.filter"
      */
-    private List filters;
+    private List<String> filters;
 
     /**
      * The path to the web.xml file to use, original default was ${maven.war.webxml}.
@@ -285,7 +285,7 @@ public abstract class AbstractOpenfireMojo extends AbstractMojo
         filterProperties.putAll(project.getProperties());
         filterProperties.put("openfire-plugin.build.date", new SimpleDateFormat("MM/dd/yyyy").format(new Date()));
 
-        for (String filtersfile : (List<String>) filters)
+        for (String filtersfile : filters)
         {
             try
             {

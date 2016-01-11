@@ -108,16 +108,16 @@ class MappingUtils
     static class RegexBasedInterpolator
     {
 
-        private List valueSources;
+        private List<ValueSource> valueSources;
 
         public RegexBasedInterpolator()
         {
-            valueSources = new ArrayList();
+            valueSources = new ArrayList<ValueSource>();
         }
 
-        public RegexBasedInterpolator(List valueSources)
+        public RegexBasedInterpolator(List<ValueSource> valueSources)
         {
-            this.valueSources = new ArrayList(valueSources);
+            this.valueSources = new ArrayList<ValueSource>(valueSources);
         }
 
         public void addValueSource(ValueSource valueSource)
@@ -148,9 +148,9 @@ class MappingUtils
                 }
 
                 Object value = null;
-                for (Iterator it = valueSources.iterator(); it.hasNext() && value == null;)
+                for (Iterator<ValueSource> it = valueSources.iterator(); it.hasNext() && value == null;)
                 {
-                    ValueSource vs = (ValueSource) it.next();
+                    ValueSource vs = it.next();
 
                     value = vs.getValue(realExpr);
                 }

@@ -267,27 +267,26 @@ public class JspcMojo extends AbstractMojo
         jspc.setCompilerTargetVM(jspCompilerTarget);
 
         //Glassfish jspc only checks
-
-        try
-        {
-            jspc.setIgnoreJspFragmentErrors(ignoreJspFragmentErrors);
-        }
-        catch (NoSuchMethodError e)
-        {
-            getLog().debug("Tomcat Jasper does not support configuration option 'ignoreJspFragmentErrors': ignored");
-        }
-
-        try
-        {
-            if (schemaResourcePrefix != null)
-            {
-                jspc.setSchemaResourcePrefix(schemaResourcePrefix);
-            }
-        }
-        catch (NoSuchMethodError e)
-        {
-            getLog().debug("Tomcat Jasper does not support configuration option 'schemaResourcePrefix': ignored");
-        }
+//        try
+//        {
+//            jspc.setIgnoreJspFragmentErrors(ignoreJspFragmentErrors);
+//        }
+//        catch (NoSuchMethodError e)
+//        {
+//            getLog().debug("Tomcat Jasper does not support configuration option 'ignoreJspFragmentErrors': ignored");
+//        }
+//
+//        try
+//        {
+//            if (schemaResourcePrefix != null)
+//            {
+//                jspc.setSchemaResourcePrefix(schemaResourcePrefix);
+//            }
+//        }
+//        catch (NoSuchMethodError e)
+//        {
+//            getLog().debug("Tomcat Jasper does not support configuration option 'schemaResourcePrefix': ignored");
+//        }
         if (verbose)
         {
             jspc.setVerbose(99);
