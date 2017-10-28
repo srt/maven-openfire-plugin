@@ -19,17 +19,18 @@ package com.reucon.maven.plugin.openfire;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Build an Openfire Plugin jar.
@@ -45,7 +46,7 @@ public class OpenfireMojo extends AbstractOpenfireMojo
     /**
      * The directory for the generated WAR.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter property="project.build.directory"
      * @required
      */
     private String outputDirectory;
@@ -53,7 +54,7 @@ public class OpenfireMojo extends AbstractOpenfireMojo
     /**
      * The name of the generated WAR.
      *
-     * @parameter expression="${project.build.finalName}"
+     * @parameter property="project.build.finalName"
      * @required
      */
     private String warName;
@@ -74,9 +75,15 @@ public class OpenfireMojo extends AbstractOpenfireMojo
      * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or
      * deploy it to the local repository instead of the default one in an execution.
      *
-     * @parameter expression="${primaryArtifact}" default-value="true"
+     * @parameter property="primaryArtifact" default-value="true"
      */
     private boolean primaryArtifact;
+
+    /**
+     * @parameter default-value="${session}"
+     * @readonly
+     */
+    private MavenSession session;
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -117,7 +124,7 @@ public class OpenfireMojo extends AbstractOpenfireMojo
         {
             performPackaging(warFile);
         }
-        catch (DependencyResolutionRequiredException e)
+        catch ( DependencyResolutionRequiredException e)
         {
             throw new MojoExecutionException("Error assembling Openfire Plugin: " + e.getMessage(), e);
         }
@@ -146,8 +153,8 @@ public class OpenfireMojo extends AbstractOpenfireMojo
      *
      */
     private void performPackaging(File warFile)
-            throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
-            MojoExecutionException, MojoFailureException
+            throws IOException, ArchiverException, ManifestException, 
+            MojoExecutionException, MojoFailureException, DependencyResolutionRequiredException
     {
         buildExplodedOpenfirePlugin(getOpenfirePluginDirectory());
 
@@ -165,7 +172,7 @@ public class OpenfireMojo extends AbstractOpenfireMojo
         //openfireArchiver.setWebxml(new File(getOpenfirePluginDirectory(), "web/WEB-INF/web.xml"));
 
         // create archive
-        archiver.createArchive(getProject(), archive);
+        archiver.createArchive( session,  getProject(), archive);
 
         String classifier = this.classifier;
         if (classifier != null)
